@@ -5,6 +5,8 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,11 +58,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private NotificationCompat.Builder getNotificationBuilder(){
+        //To switch to the app when the notification is clicked on
+        Intent notificationIntent = new Intent(this,MainActivity.class);
+        PendingIntent notificaitonPendingIntent = PendingIntent.getActivity(this,
+                NOTIFICATION_ID,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Notification
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this,PRIMARY_CHANNEL_ID)
                 .setContentTitle("You Have a Notification!")
                 .setContentText("It's a dummy notification")
-                .setSmallIcon(R.drawable.ic_android);
-
+                .setSmallIcon(R.drawable.ic_android)
+                .setContentIntent(notificaitonPendingIntent)
+                // To remove the notification when clicked on
+                .setAutoCancel(true);
         return notifyBuilder;
     }
 
