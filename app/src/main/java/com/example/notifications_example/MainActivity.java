@@ -7,6 +7,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,8 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     private Button notifyBtn;
+    private Button updateBtn;
+    private Button cancelBtn;
 
     private static final String PRIMARY_CHANNEL_ID = "primary_notification_channel";
     private NotificationManager mNotifyManager;
@@ -35,11 +39,52 @@ public class MainActivity extends AppCompatActivity {
                 sendNotification();
             }
         });
+
+        updateBtn = findViewById(R.id.updateBtn);
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateNotification();
+            }
+        });
+
+        cancelBtn = findViewById(R.id.cancelBtn);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelNotification();
+            }
+        });
+
+        setNotificationButtonState(true,false,false);
     }
 
     public void sendNotification(){
         NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
         mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+
+        setNotificationButtonState(false,true,true);
+
+    }
+
+    public void updateNotification(){
+        Bitmap androidImage = BitmapFactory.decodeResource(getResources(),R.drawable.mascot_1);
+        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
+        notifyBuilder.setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(androidImage)
+                        .setBigContentTitle("Dummy Update!!"));
+
+        mNotifyManager.notify(NOTIFICATION_ID,notifyBuilder.build());
+
+        setNotificationButtonState(false,false,true);
+
+    }
+
+    public void cancelNotification(){
+        mNotifyManager.cancel(NOTIFICATION_ID);
+
+        setNotificationButtonState(true,false,false);
+
     }
 
     private void createNotifcatoinChannel() {
@@ -72,6 +117,14 @@ public class MainActivity extends AppCompatActivity {
                 // To remove the notification when clicked on
                 .setAutoCancel(true);
         return notifyBuilder;
+    }
+
+    void setNotificationButtonState(Boolean isNotifyEnabled,
+                                    Boolean isUpdateEnabled,
+                                    Boolean isCancelEnabled){
+        notifyBtn.setEnabled(isNotifyEnabled);
+        updateBtn.setEnabled(isUpdateEnabled);
+        cancelBtn.setEnabled(isCancelEnabled);
     }
 
 }
